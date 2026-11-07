@@ -1,0 +1,57 @@
+package com.onlypenal.app
+
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.os.Bundle
+import android.provider.Settings
+import android.view.Gravity
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.graphics.Color
+
+class MainActivity : Activity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val layout = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER
+            setPadding(28, 36, 28, 36)
+            setBackgroundColor(Color.rgb(18, 18, 24))
+        }
+
+        val title = TextView(this).apply {
+            text = "ONLY PENAL"
+            textSize = 30f
+            setTextColor(Color.WHITE)
+            gravity = Gravity.CENTER
+        }
+        val info = TextView(this).apply {
+            text = "\nFloating utility panel\n\nVoice presets are a preview only. Android apps generally cannot replace another app's live game-microphone audio without device/game support."
+            textSize = 15f
+            setTextColor(Color.LTGRAY)
+            gravity = Gravity.CENTER
+        }
+        val start = Button(this).apply {
+            text = "ENABLE FLOATING PANEL"
+            setOnClickListener {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this@MainActivity)) {
+                    val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:$packageName"))
+                    startActivity(intent)
+                } else {
+                    startService(Intent(this@MainActivity, FloatingPanelService::class.java))
+                    finish()
+                }
+            }
+        }
+        layout.addView(title)
+        layout.addView(info)
+        layout.addView(start)
+        setContentView(layout)
+    }
+}
+￼Enter
